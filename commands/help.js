@@ -9,7 +9,7 @@ export const help = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    execute(client, msg, args) {
+    execute(_, msg, args) {
         const data = [];
         const { commands } = msg.client;
         let embed = { embed: {

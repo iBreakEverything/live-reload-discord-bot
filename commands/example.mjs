@@ -1,4 +1,4 @@
-import { Logger } from "../util/logger.js";
+import { Logger } from '../util/logger.js';
 export const example = {
     description: 'example description',
     name: 'example',
@@ -8,7 +8,7 @@ export const example = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    async execute(client, msg, args) {
+    async execute(client, msg, _) {
         msg.channel.send({ embed: {
             title: '❕ **Example**',
             description: 'This is an example.',
