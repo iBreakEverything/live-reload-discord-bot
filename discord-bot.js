@@ -128,8 +128,3 @@ async function importCommands() {
         client.commands.set(command[filename].name, command[filename]);
     }
 }
-
-function startAtTime(h = 0, m = 0, s = 0){
-    var d = new Date();
-    return (-d + d.setHours(h,m,s,0));
-}
