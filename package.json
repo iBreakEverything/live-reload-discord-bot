@@ -11,6 +11,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "discord.js": "^12.2.0"
+    "discord.js": "^12.2.0",
+    "heapify": "^0.6.0"
   }
 }

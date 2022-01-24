@@ -107,4 +107,4 @@ dist
 *.bak
 
 # Testing files
-trash/
+tests/
