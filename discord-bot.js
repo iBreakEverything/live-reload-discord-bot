@@ -96,8 +96,8 @@ client.on('message', msg => {
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
             let secLeft = Math.ceil(timeLeft);
-            let message = `🖕 don't spam you little shit! Wait ${secLeft} more second`
-            if (timeLeft > 1) {
+            let message = `Wait ${secLeft} more second`
+            if (timeLeft >= 1) {
                 message += 's';
             }
             message += ` before reusing the \`${prefix}${command.name}\` command.`;
