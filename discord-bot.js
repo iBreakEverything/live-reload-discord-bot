@@ -71,7 +71,7 @@ client.on('message', msg => {
     }
 
     if (command.guildOnly && msg.channel.type !== 'text') {
-        return Logger.userLog(msg, Logger.TYPE.WRN, 'Fuck you.');
+        return Logger.userLog(msg, Logger.TYPE.WRN, 'Invalid channel.');
     }
 
     if (command.reqArgs && !args.length) {
