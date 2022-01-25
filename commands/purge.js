@@ -12,14 +12,7 @@ export const purge = {
     permissionRequired: 3,
     reqArgs: true,
     guildOnly: true,
-    /**
-     * 
-     * @param {import('discord.js').Client} client 
-     * @param {import('discord.js').Message} msg 
-     * @param {*} args 
-     * @returns 
-     */
-    async execute(client, msg, args) {
+    async execute(commandQueue, client, msg, args) {
         const count = parseInt(args[0]);
         const deleteOld = args[1] === 'true' ? true : false;
         if (isNaN(count)) {
@@ -30,13 +23,20 @@ export const purge = {
         try {
             if (!deleteOld) {
                 await msg.channel.bulkDelete(1, true);  // Delete command
-                let delCount = await msg.channel.bulkDelete(Math.max(highPurgeCount, count), true);
+                let delCount = await msg.channel.bulkDelete(Math.min(highPurgeCount, count), true);
                 await msg.channel.send(`Deleted ${delCount.size} messages`).then(msg => msg.delete({ timeout:3000 }));
             } else {
                 await msg.channel.bulkDelete(1, true);  // Delete command
                 let msgs = await msg.channel.messages.fetch({ limit: count });
+                let i = 1;
                 for (let [key, _] of msgs) {
-                    msgs.get(key).delete();  // FIXME add to queue
+                    commandQueue.push(
+                        function () {
+                            msgs.get(key).delete();
+                        },
+                        2500 * i
+                    );
+                    i++;
                 }
                 msg.channel.send(`Deleting ${msgs.size} messages...`).then(msg => msg.delete({ timeout:3000 }));
             }

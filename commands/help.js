@@ -9,8 +9,7 @@ export const help = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    execute(_, msg, args) {
-        const data = [];
+    execute(commandQueue, _, msg, args) {
         const { commands } = msg.client;
         let embed = { embed: {
             title: null,
@@ -22,9 +21,10 @@ export const help = {
             embed.embed.description = 'Here\'s all the available commands';
             embed.embed.fields = [];
             commands.map(command => {
+                const aliases = command.aliases.length === 0 ? 'No aliases set' : command.aliases.join(' | ');
                 let info = `${command.description}\n**Usage**: \`${prefix}${command.name}`
                     + ( command.usage !== null ? ` ${command.usage}\`` : '\`' )
-                    + `\n**Aliases**: ${command.aliases.join(' | ')}`;
+                    + `\n**Aliases**: ${aliases}`;
                 let field = {
                     name: `**${command.name}**`,
                     value: info
@@ -39,6 +39,7 @@ export const help = {
             }
             embed.embed.title = `❓ \`${command.name}\` command usage and info`;
             embed.embed.description = command.description;
+            const aliases = command.aliases.length === 0 ? 'No aliases set' : command.aliases.join(' | ');
             embed.embed.fields = [
                 {
                     name: '**Usage**',
@@ -46,7 +47,7 @@ export const help = {
                 },
                 {
                     name: '**Aliases**',
-                    value: `${command.aliases.join(' | ')}`,
+                    value: `${aliases}`,
                 },
                 {
                     name: '**Cooldown**',
@@ -62,6 +63,11 @@ export const help = {
                 }
             ];
         }
-        msg.channel.send(embed);
+        commandQueue.push(
+            function () {
+                msg.channel.send(embed);
+            },
+            0
+        );
     },
 };

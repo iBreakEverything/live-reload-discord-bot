@@ -7,25 +7,30 @@ export const ping = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    async execute(client, msg, _) {
-        msg.channel.send('〽️ Pinging...').then(botMsg => {
-            botMsg.edit({
-                content: '🏓',
-                embed: {
-                    title: 'Ping',
-                    description: [
-                    `**Server**: ${botMsg.createdAt - msg.createdAt}ms`,
-                    `**API**: ${Math.round(client.ws.ping)}ms`,
-                    `**Uptime**:  ${msToTime(client.uptime)}`
-                    ].join('\n'),
-                    color: 0x4aa444,
-                    timestamp: new Date()
-                }
-            }).catch((err) => {
-                botMsg.delete({ timeout:3000 });
-                Logger.dualLog(client, msg, Logger.TYPE.ERR, 'Could not send/edit message.', 'Failure on ping message edit.', err);
-            });
-        });
+    async execute(commandQueue, client, msg, _) {
+        commandQueue.push(
+            function () {
+                msg.channel.send('〽️ Pinging...').then(botMsg => {
+                    botMsg.edit({
+                        content: '🏓',
+                        embed: {
+                            title: 'Ping',
+                            description: [
+                            `**Server**: ${botMsg.createdAt - msg.createdAt}ms`,
+                            `**API**: ${Math.round(client.ws.ping)}ms`,
+                            `**Uptime**:  ${msToTime(client.uptime)}`
+                            ].join('\n'),
+                            color: 0x4aa444,
+                            timestamp: new Date()
+                        }
+                    }).catch((err) => {
+                        botMsg.delete({ timeout:3000 });
+                        Logger.dualLog(client, msg, Logger.TYPE.ERR, 'Could not send/edit message.', 'Failure on ping message edit.', err);
+                    });
+                });
+            },
+            1
+        );
     },
 };
 

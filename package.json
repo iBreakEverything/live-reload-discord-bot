@@ -12,6 +12,8 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
-    "heapify": "^0.6.0"
+    "fast-xml-parser": "^4.0.1",
+    "heapify": "^0.6.0",
+    "node-fetch": "^2.6.7"
   }
 }

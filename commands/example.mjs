@@ -8,12 +8,17 @@ export const example = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    async execute(client, msg, _) {
-        msg.channel.send({ embed: {
-            title: '❕ **Example**',
-            description: 'This is an example.',
-            color: 0x000000,
-        }});
+    async execute(commandQueue, client, msg, _) {
+        commandQueue.push(
+            function () {
+                msg.channel.send({ embed: {
+                    title: '❕ **Example**',
+                    description: 'This is an example.',
+                    color: 0x000000,
+                }});
+            },
+            10000
+        );
         Logger.dualLog(client, msg, Logger.TYPE.NFO, 'This is a logger test.');
     },
 };

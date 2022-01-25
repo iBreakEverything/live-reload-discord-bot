@@ -7,10 +7,17 @@ export const count = {
     permissionRequired: 0,
     reqArgs: false,
     guildOnly: false,
-    async execute(_, msg, args) {
+    async execute(commandQueue, _, msg, args) {
         let count = parseInt(args[0]);
-        while (count > 0) {
-            msg.channel.send(count--);  // FIXME add to queue
+        while (count >= 0) {
+            const aux = count;
+            commandQueue.push(
+                function () {
+                    msg.channel.send(aux);
+                },
+                aux * 1000
+            );
+            count--;
         }
     },
 };

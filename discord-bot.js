@@ -2,10 +2,13 @@ import { readdirSync } from 'fs';
 import { Client, Collection } from 'discord.js';
 import { token, prefix, botDevChannelId } from './config.js';
 import { Logger } from './util/logger.js'
+import { MinQueue } from 'heapify/heapify.mjs';
 
 const client = new Client();
 const cooldowns = new Collection();
+const commandQueue = new MinQueue(1024, [], [], Function, Uint32Array);
 
+setInterval(runCommands, 250);
 importCommands();
 
 client.on('ready', () => {
@@ -30,9 +33,9 @@ client.on('message', msg => {
     const commandName = args.shift().toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-    if (commandName === "reload") {
+    if (commandName === 'reload') {
         let oldCommands = client.commands.map(x => x.name);
-        msg.reply("Reloading...")
+        msg.reply('Reloading...')
         .then(importCommands())
         .then(reply => {
             let desc = '';
@@ -41,12 +44,12 @@ client.on('message', msg => {
             let newCommandList = newCommands.filter(x => !oldCommands.includes(x));
 
             if (newCommandList.length !== 0) {
-                let gained = newCommandList.reduce((x,y) => {return x += ", " + y});
+                let gained = newCommandList.reduce((x,y) => {return x += ', ' + y});
                 desc += `\n**New commands**: ${gained}`
             }
 
             if (oldCommandList.length !== 0) {
-                let lost = oldCommandList.reduce((x,y) => {return x += ", " + y});
+                let lost = oldCommandList.reduce((x,y) => {return x += ', ' + y});
                 desc += `\n**Removed commands**: ${lost}`;
             }
 
@@ -62,7 +65,6 @@ client.on('message', msg => {
                 timestamp: new Date()
             }})
         });
-        //console.log(reply);
         return;
     }
 
@@ -109,7 +111,7 @@ client.on('message', msg => {
     setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
     try {
-        command.execute(client, msg, args);
+        command.execute(commandQueue, client, msg, args);
     } catch (err) {
         return Logger.dualLog(client, msg, Logger.TYPE.ERR, `Failed to execute \`${prefix}${command.name}\``, `Failed to execute ${prefix}${command.name}`, err);
     }
@@ -126,5 +128,13 @@ async function importCommands() {
         let command = await import(`./commands/${file}`);
         let filename = file.substring(0, file.length - ext.length);
         client.commands.set(command[filename].name, command[filename]);
+    }
+}
+
+async function runCommands() {
+    const priority = commandQueue.peekPriority();
+    const command = commandQueue.pop();
+    if (command) {
+        setTimeout(command, priority);
     }
 }
