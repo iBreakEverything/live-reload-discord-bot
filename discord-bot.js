@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import { Client, Collection } from 'discord.js';
-import { token, prefix, botDevChannelId } from './config.js';
+import { token, prefix } from './config.js';
 import { Logger } from './util/logger.js'
 import { MinQueue } from 'heapify/heapify.mjs';
 
